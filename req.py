@@ -6,6 +6,7 @@ import requests
 import json
 
 from PyQt5 import QtWidgets, QtGui, QtCore, QtWebEngineWidgets
+from SearchResultsList import SearchListWidget
 
 class MainWidget(QtWidgets.QWidget):
 
@@ -14,20 +15,30 @@ class MainWidget(QtWidgets.QWidget):
             self.setGeometry(0,0,200,200)
             vBox = QtWidgets.QVBoxLayout(self)
 
-            labels = []
-            images = []
-            for item in self.search("Mord", film=True):
-                print(item)
-                labels.append(
-                    QtWidgets.QLabel(item['title'], self)
-                )
-                vBox.addWidget(labels[-1])
-                images.append(
-                    QtWidgets.QLabel()
-                )
-                images[-1].setPixmap(item['image'])
-                vBox.addWidget(images[-1])
+            # self.resultList = QtWidgets.QListWidget(self)
 
+            self.searchResult = SearchListWidget(self)
+            # labels = []
+            # images = []
+            for item in self.search("Mord", film=True):
+                self.searchResult.add_Element(item)
+                # self.resultList.addItem(
+                #     QtWidgets.QListWidgetItem(
+                #         item['title']
+                #     )
+                # )
+                # print(item)
+                # labels.append(
+                #     QtWidgets.QLabel(item['title'], self)
+                # )
+                # vBox.addWidget(labels[-1])
+                # images.append(
+                #     QtWidgets.QLabel()
+                # )
+                # images[-1].setPixmap(item['image'])
+                # vBox.addWidget(images[-1])
+
+            vBox.addWidget(self.searchResult)
             self.setLayout(vBox)
             self.show()
 
@@ -95,7 +106,7 @@ class MainWidget(QtWidgets.QWidget):
             #     class=" text_image-alt-tag"
             #     itemprop="thumbnailUrl"
             #     srcset="//aiswatchbox-a.akamaihd.net/watchbox/format/15263_dvdcover/484x677/k-ein-bisschen-schwanger.jpg
-            # 484w, //aiswatchbox-a.akamaihd.net/watchbox/format/15263_dvdcover/371x520/k-ein-bisschen-schwanger.jpg 371w, 
+            # 484w, //aiswatchbox-a.akamaihd.net/watchbox/format/15263_dvdcover/371x520/k-ein-bisschen-schwanger.jpg 371w,
             # //aiswatchbox-a.akamaihd.net/watchbox/format/15263_dvdcover/373x522/k-ein-bisschen-schwanger.jpg
             # 373w, //aiswatchbox-a.akamaihd.net/watchbox/format/15263_dvdcover/352x493/k-ein-bisschen-schwanger.jpg 352w"
             # >
