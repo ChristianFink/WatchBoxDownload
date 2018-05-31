@@ -6,22 +6,20 @@ import requests
 from bs4 import BeautifulSoup as bs
 
 
-from PyQt5 import QtWidgets, QtGui, QtCore, QtWebEngineWidgets"+API_VERSION+"
+from PyQt5 import QtWidgets, QtGui, QtCore, QtWebEngineWidgets
 
 # form-field__input
 # search__input
 # js-search-input
 
-https://api.watchbox.de
-v1
 
-url:"https://api.watchbox.de/v1/search/",
-data:n,
-mimeType:"application/json; charset=utf-8",
-method:"GET",
-crossDomain:!0,
-beforeSend:function(){
-i.addClass("loading-slider_show")
+# url:"https://api.watchbox.de/v1/search/",
+# data:n,
+# mimeType:"application/json; charset=utf-8",
+# method:"GET",
+# crossDomain:!0,
+# beforeSend:function(){
+# i.addClass("loading-slider_show")
 
 class MainWidget(QtWidgets.QWidget):
 

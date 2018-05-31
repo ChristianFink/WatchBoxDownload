@@ -1,45 +1,104 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sys
 import requests
 import json
 
-payload = {
-    'active': "true",
-    'maxPerPage': 28,
-    'page': 1,
-    'term': "Hentai*",
-    'types': '["film", "serie"]'
-    # 'types': '["serie"]'
-}
+from PyQt5 import QtWidgets, QtGui, QtCore, QtWebEngineWidgets
 
-url = "https://api.watchbox.de/v1/search/"
-mimeType = "application/json; charset=utf-8"
-r = requests.get(url, params=payload)
+class MainWidget(QtWidgets.QWidget):
 
-urlBase = "https://www.watchbox.de/{0}/{1}-{2}/"
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.setGeometry(0,0,200,200)
+            vBox = QtWidgets.QVBoxLayout(self)
 
-if r.status_code == 200:
-    data = r.json()
+            labels = []
+            images = []
+            for item in self.search("Mord", film=True):
+                print(item)
+                labels.append(
+                    QtWidgets.QLabel(item['title'], self)
+                )
+                vBox.addWidget(labels[-1])
+                images.append(
+                    QtWidgets.QLabel()
+                )
+                images[-1].setPixmap(item['image'])
+                vBox.addWidget(images[-1])
 
-    print(50*"=")
-    print(data['total'])
-    print(50*"=")
-    for item in data['items']:
-        itemURL = urlBase.format(
-            "filme" if item['type'] == "film" else "serien",
-            item['seoPath'],
-            item['entityId']
-        )
-        print("{0} {1} [{2}]".format(
-            "*" if item["active"] else " ",
-            item["formatTitle"],
-            itemURL
-        ))
-        print(50*"-")
-        # for k, v in item.items():
-        #     print("{0:50} : {1}".format(k, v))
+            self.setLayout(vBox)
+            self.show()
 
+        def search(self, term, film=True, serie=True):
+            _types = []
+            if film:
+                _types.append("film")
+            if serie:
+                _types.append("serie")
+
+            _strTypes = ", ".join(
+                '"{0}"'.format(x) for x in _types
+            )
+
+            payload = {
+                'active': "true",
+                'maxPerPage': 28,
+                'page': 1,
+                'term': term,
+                'types': '[{0}]'.format(_strTypes)
+            }
+
+            url = "https://api.watchbox.de/v1/search/"
+            # mimeType = "application/json; charset=utf-8"
+            r = requests.get(url, params=payload)
+            urlBase = "https://www.watchbox.de/{0}/{1}-{2}/"
+
+            if r.status_code == 200:
+                data = r.json()
+                for item in data['items']:
+                    itemURL = urlBase.format(
+                        "filme" if item['type'] == "film" else "serien",
+                        item['seoPath'],
+                        item['entityId']
+                    )
+                    print("{0} {1} [{2}]".format(
+                        "*" if item["active"] else " ",
+                        item["formatTitle"],
+                        itemURL
+                    ))
+                    imageurl = "http://aiswatchbox-a.akamaihd.net/watchbox/format/{0}_dvdcover/484x677/{1}.jpg".format(
+                        item['entityId'],
+                        item['seoPath']
+                    )
+                    yield {
+                        'url': itemURL,
+                        'title': item['formatTitle'],
+                        'image': self.cover(imageurl),
+                        'rawData': item
+                    }
+            else:
+                yield None
+
+
+        def cover(self, url):
+            r = requests.get(url)
+            pixmap = QtGui.QPixmap()
+            if r.status_code == 200:
+                pixmap.loadFromData(r.content, "JPG")
+            return pixmap
+            # <img
+            #     src="//aiswatchbox-a.akamaihd.net/watchbox/format/15263_dvdcover/484x677/k-ein-bisschen-schwanger.jpg"
+            #     aria-hidden="true"
+            #     alt="(K)Ein bisschen schwanger"
+            #     class=" text_image-alt-tag"
+            #     itemprop="thumbnailUrl"
+            #     srcset="//aiswatchbox-a.akamaihd.net/watchbox/format/15263_dvdcover/484x677/k-ein-bisschen-schwanger.jpg
+            # 484w, //aiswatchbox-a.akamaihd.net/watchbox/format/15263_dvdcover/371x520/k-ein-bisschen-schwanger.jpg 371w, 
+            # //aiswatchbox-a.akamaihd.net/watchbox/format/15263_dvdcover/373x522/k-ein-bisschen-schwanger.jpg
+            # 373w, //aiswatchbox-a.akamaihd.net/watchbox/format/15263_dvdcover/352x493/k-ein-bisschen-schwanger.jpg 352w"
+            # >
 # type                                               : film
 # entityId                                           : 15887
 # headline                                           : Hentai Kamen 2 - The Abnormal Crisis
@@ -51,7 +110,7 @@ if r.status_code == 200:
 # productionYear                                     : 2016
 # seoPath                                            : hentai-kamen-2-the-abnormal-crisis
 # genres                                             : ['Action', 'Fantasy', 'Komödie', 'Asian']
-# tags                                               : []
+# tags                                               : []Hentai
 # createdAt                                          : {'date': '2018-03-01 00:00:00', 'timezone_type': 1, 'timezone': '+01:00'}
 # active                                             : True
 # rating                                             :
@@ -67,5 +126,7 @@ if r.status_code == 200:
 
 
 
-else:
-    print(r.status_code)
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    win = MainWidget()
+    sys.exit(app.exec_())
