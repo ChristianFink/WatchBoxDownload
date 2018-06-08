@@ -5,23 +5,24 @@
 # @Date:   2018-05-18T08:45:21+02:00
 # @Email:  christian.fink@bluewin.ch
 # @Last modified by:   christian
-# @Last modified time: 2018-05-19T12:45:41+02:00
+# @Last modified time: 2018-06-08T11:43:03+02:00
+#
+#
+#
 
-# import time
-# import sys
-# import os
-# import re
-# import urllib2
+
 import os
 import sys
 from PyQt5 import QtWidgets, QtGui, QtCore
 import gi
 from gi.repository import GObject
-from formular_ui import Ui_Form
 import requests
 from bs4 import BeautifulSoup
 import json
 import re
+from res.formular_ui import Ui_Form
+from res.SearchDialog import SEARCHDIALOG
+
 
 class MainWidget(QtWidgets.QWidget):
 
@@ -30,10 +31,29 @@ class MainWidget(QtWidgets.QWidget):
         self.app = app
         self.ui = Ui_Form()
         self.ui.setupUi(self)
+
+        self.searchDialog = SEARCHDIALOG()
+        self.searchDialog.newElement.connect(self._insertElement)
+
         self.ui.btn_Insert.clicked.connect(self._insert)
+        self.ui.btn_Search.clicked.connect(self._search)
         self.ui.btn_Download.clicked.connect(self._startDownload)
+
         self.show()
-        # self.ui.entry_URL.setText("https://www.watchbox.de/serien/yosuga-no-sora-15375/staffel-1/zurueck-in-die-vergangenheit-373928.html")
+
+    @QtCore.pyqtSlot()
+    def _search(self):
+        _term = self.ui.search.text()
+        if _term != "":
+            self.searchDialog.search(_term)
+            self.searchDialog.show()
+
+    @QtCore.pyqtSlot(str)
+    def _insertElement(self, url):
+        for data in self.__mainContent(url):
+            success = self.ui.list_URL.addURL(data)
+            print("{0} : {1}".format(data['title'], success))
+        self.ui.entry_URL.setText("")
 
     @QtCore.pyqtSlot()
     def _insert(self):
@@ -277,7 +297,6 @@ class MainWidget(QtWidgets.QWidget):
             'hls': hls,
             'dash': dash
         }
-
 
 
 if __name__ == "__main__":

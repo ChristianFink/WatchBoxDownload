@@ -5,16 +5,12 @@
 # @Date:   2018-05-18T09:40:20+02:00
 # @Email:  christian.fink@bluewin.ch
 # @Last modified by:   christian
-# @Last modified time: 2018-05-19T12:43:31+02:00
+# @Last modified time: 2018-06-08T11:41:25+02:00
+#
+# Widget zur Anzeige der Downloadliste
+# Thread zum Download der Filme (benötigt youtube-dl)
 
-# import time
-# import sys
-# import os
 import re
-# import urllib2
-# import requests
-# from bs4 import BeautifulSoup
-# import MySQLdb
 from PyQt5 import QtWidgets, QtGui, QtCore
 import requests
 from bs4 import BeautifulSoup
@@ -220,15 +216,8 @@ class MovieListeWidgetItemWidget(QtWidgets.QWidget):
         vLayout_progress.addWidget(QtWidgets.QLabel("Audio:"))
         vLayout_progress.addWidget(self.progress_audio)
 
-        # lbl_url = QtWidgets.QLabel(self.parent.data['url'])
         lbl_title = QtWidgets.QLabel(self.parent.data['title'])
-        # lbl_hls = QtWidgets.QLabel(self.parent.data['hls'])
-        # lbl_dash = QtWidgets.QLabel(self.parent.data['dash'])
-
         vLayout.addWidget(lbl_title)
-        # vLayout.addWidget(lbl_url)
-        # vLayout.addWidget(lbl_hls)
-        # vLayout.addWidget(lbl_dash)
 
         self.setLayout(hLayout)
 
