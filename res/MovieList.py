@@ -5,7 +5,7 @@
 # @Date:   2018-05-18T09:40:20+02:00
 # @Email:  christian.fink@bluewin.ch
 # @Last modified by:   christian
-# @Last modified time: 2018-06-08T11:41:25+02:00
+# @Last modified time: 2018-06-30T07:42:12+02:00
 #
 # Widget zur Anzeige der Downloadliste
 # Thread zum Download der Filme (benötigt youtube-dl)
@@ -30,7 +30,7 @@ class DownloadThread(QtCore.QThread):
             'noplaylist': True,
             'quiet': True,
             'progress_hooks': [self.myHook],
-            'prefer-ffmpeg': True
+            'prefer_ffmpeg': True
         }
         self.url = url
         self.subClips = 2

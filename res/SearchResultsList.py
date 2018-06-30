@@ -5,7 +5,7 @@
 # @Date:   2018-05-31T17:33:08+02:00
 # @Email:  christian.fink@bluewin.ch
 # @Last modified by:   christian
-# @Last modified time: 2018-06-08T11:41:41+02:00
+# @Last modified time: 2018-06-15T17:17:37+02:00
 #
 # Widget zur Darstellung der Suchergebnisse
 #
